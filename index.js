@@ -6,29 +6,41 @@
  */
 
 // Given Parameters
-const vel = 10000; // velocity (km/h)
-const acc = 3; // acceleration (m/s^2)
-const time = 3600; // seconds (1 hour)
-const d = 0; // distance (km)
-const fuel = 5000; // remaining fuel (kg)
-const fbr = 0.5; // fuel burn rate (kg/s)
+const velocityKmH = 10000; // velocity (km/h)
+const accelerationMs2 = 3; // acceleration (m/s^2)
+const timeSec = 3600; // seconds (1 hour)
+const initialDistanceKm = 0; // distance (km)
+const initialFuelKg = 5000; // initial fuel (kg)
+const fuelBurnRateKgS = 0.5; // fuel burn rate (kg/s)
 
+// Convert velocity from km/h to m/s
+const velocityMs = velocityKmH * 1000 / 3600;
 
-const d2 = d + (vel*time) //calcultes new distance
-const rf = fbr*time //calculates remaining fuel
-const vel2 = calcNewVel(acc, vel, time) //calculates new velocity based on acceleration
+// Calculate new distance in km
+// Velocity in km/h, so we need to convert time to hours
+const newDistanceKm = initialDistanceKm + (velocityKmH * (timeSec / 3600)); // Convert time to hours and multiply
 
-// Pick up an error with how the function below is called and make it robust to such errors
-calcNewVel = (vel, acc, time) => { 
-  return vel + (acc*time)
+// Calculate total fuel burned and remaining fuel
+const fuelBurnedKg = fuelBurnRateKgS * timeSec;
+const remainingFuelKg = initialFuelKg - fuelBurnedKg;
+
+// Calculate new velocity in km/h based on acceleration
+const calculateNewVelocityKmH = (initialVelocityKmH, accelerationMs2, timeSec) => {
+  // Convert initial velocity to m/s
+  const initialVelocityMs = initialVelocityKmH * 1000 / 3600;
+  // Calculate new velocity in m/s
+  const newVelocityMs = initialVelocityMs + (accelerationMs2 * timeSec);
+  // Convert new velocity back to km/h
+  return newVelocityMs * 3600 / 1000;
+};
+
+const newVelocityKmH = calculateNewVelocityKmH(velocityKmH, accelerationMs2, timeSec);
+
+// Validate remaining fuel
+if (remainingFuelKg < 0) {
+  throw new Error('Fuel consumption exceeds the available fuel.');
 }
 
-console.log(`Corrected New Velocity: ${vel2} km/h`);
-console.log(`Corrected New Distance: ${d2} km`);
-console.log(`Corrected Remaining Fuel: ${rf} kg`);
-
-
-
-
-
-
+console.log(`Corrected New Velocity: ${newVelocityKmH.toFixed(2)} km/h`);
+console.log(`Corrected New Distance: ${newDistanceKm.toFixed(2)} km`);
+console.log(`Corrected Remaining Fuel: ${remainingFuelKg.toFixed(2)} kg`);
